@@ -31,7 +31,20 @@ fn main() {
     println!("cargo:rerun-if-changed=Cargo.toml");
     println!("cargo:rerun-if-env-changed=LOCAL_ASSETS_PATH");
     println!("Build File running");
-    ui::setup().unwrap()
+    ui::setup().unwrap();
+    otlp::build().unwrap()
+}
+
+mod otlp {
+    use std::io;
+    extern crate prost_build;
+
+    pub fn build() -> io::Result<()> {
+        prost_build::compile_protos(&["./protos/common.proto"], &["protos"]).unwrap();
+        prost_build::compile_protos(&["./protos/resource.proto"], &["protos"]).unwrap();
+        prost_build::compile_protos(&["./protos/trace_service.proto"], &["protos"]).unwrap();
+        Ok(())
+    }
 }
 
 mod ui {

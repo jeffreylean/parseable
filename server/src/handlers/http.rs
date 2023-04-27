@@ -34,6 +34,7 @@ use crate::option::CONFIG;
 mod health_check;
 mod ingest;
 mod logstream;
+mod otlp;
 mod query;
 
 include!(concat!(env!("OUT_DIR"), "/generated.rs"));
@@ -158,6 +159,9 @@ pub fn configure_routes(cfg: &mut web::ServiceConfig) {
                 .route(web::get().to(logstream::get_retention)),
         );
 
+    let otlp_api =
+        web::scope("").service(web::resource("/traces").route(web::post().to(otlp::traces)));
+
     cfg.service(
         // Base path "{url}/api/v1"
         web::scope(&base_path())
@@ -184,6 +188,7 @@ pub fn configure_routes(cfg: &mut web::ServiceConfig) {
                         logstream_api,
                     ),
             )
+            .service(web::scope("/otlp").service(otlp_api))
             .wrap(HttpAuthentication::basic(validator)),
     )
     // GET "/" ==> Serve the static frontend directory

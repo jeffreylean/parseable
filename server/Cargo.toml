@@ -75,6 +75,9 @@ pyroscope = { version = "0.5.3", optional = true }
 pyroscope_pprofrs = { version = "0.2", optional = true }
 uptime_lib = "0.2.2"
 regex = "1.7.3"
+prost = "0.11.9"
+prost-types = "0.11.9"
+actix-protobuf = "0.9.0"
 
 [build-dependencies]
 static-files = "0.2"
@@ -83,6 +86,7 @@ ureq = "2.6"
 sha1_smol = { version = "1.0", features = ["std"] }
 vergen = { version = "7.5", features = ["build", "git", "cargo"] }
 zip = { version = "0.6", default_features = false, features = ["deflate"] }
+prost-build = "0.11.9"
 
 [dev-dependencies]
 maplit = "1.0"
