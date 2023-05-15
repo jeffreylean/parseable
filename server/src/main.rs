@@ -36,6 +36,7 @@ mod analytics;
 mod banner;
 mod event;
 mod handlers;
+mod ingress;
 mod metadata;
 mod metrics;
 mod migration;
@@ -93,6 +94,10 @@ async fn main() -> anyhow::Result<()> {
     // start the analytics scheduler if enabled
     if CONFIG.parseable.send_analytics {
         analytics::init_analytics_scheduler().await;
+    }
+    // Initialize nats ingress if configure
+    if !CONFIG.parseable.nats_addr.is_empty() {
+        ingress::nats::new().await;
     }
 
     let app = handlers::http::run_http(prometheus);

@@ -192,6 +192,9 @@ pub struct Server {
 
     /// Parquet compression algorithm
     pub parquet_compression: Compression,
+
+    /// Nats server address
+    pub nats_addr: String,
 }
 
 impl FromArgMatches for Server {
@@ -254,6 +257,10 @@ impl FromArgMatches for Server {
             "zstd" => Compression::ZSTD,
             _ => unreachable!(),
         };
+        self.nats_addr = m
+            .get_one::<String>(Self::NATS_ADDR)
+            .cloned()
+            .expect("default for nats server address");
 
         Ok(())
     }
@@ -275,6 +282,7 @@ impl Server {
     pub const PARQUET_COMPRESSION_ALGO: &str = "compression-algo";
     pub const DEFAULT_USERNAME: &str = "admin";
     pub const DEFAULT_PASSWORD: &str = "admin";
+    pub const NATS_ADDR: &str = "nats-addr";
 
     pub fn local_stream_data_path(&self, stream_name: &str) -> PathBuf {
         self.local_staging_path.join(stream_name)
@@ -406,6 +414,15 @@ impl Server {
                         "lz4",
                         "zstd"])
                     .help("Parquet compression algorithm"),
+            )
+            .arg(
+                Arg::new(Self::NATS_ADDR)
+                    .long(Self::NATS_ADDR)
+                    .env("P_NATS_ADDR")
+                    .value_name("STRING")
+                    .required(false)
+                    .default_value("")
+                    .help("NATS server address"),
             )
     }
 }
